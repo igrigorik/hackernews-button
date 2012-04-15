@@ -79,6 +79,9 @@ func Button(w http.ResponseWriter, r *http.Request) {
         panic("Cannot unmarshall JSON data")
     }
 
+    // Cache the response in the HTTP edge cache, if possible
+    // http://code.google.com/p/googleappengine/issues/detail?id=2258
+    w.Header().Set("Cache-Control", "public, max-age=61;")
 
     if hnreply.Hits == 0 {
         c.Infof("No hits, rendering submit template")
@@ -99,9 +102,8 @@ func Button(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-
 func Redirect(w http.ResponseWriter, r *http.Request) {
-    http.Redirect(w, r, "https://github.com/igrigorik", http.StatusFound)
+    http.Redirect(w, r, "https://github.com/igrigorik/hackernews-button", http.StatusFound)
 }
 
 func init() {
