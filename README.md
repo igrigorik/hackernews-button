@@ -6,7 +6,7 @@ Async, embeddable submit + vote counter button for Hacker News. If the story has
 
 ### Embedding the button
 
-**Step 1**, place the HN button where you want to appear:
+**Step 1**, place the HN link where you want the button appear on the page:
 
 ```html
 <!-- Auto-detect URL of current page and title if necessary -->
@@ -16,7 +16,7 @@ Async, embeddable submit + vote counter button for Hacker News. If the story has
 <a href="http://news.ycombinator.com/submit" class="hn-share-button" data-title="Some Title" data-url="http://www.igvita.com/">Vote on HN</a>
 ```
 
-**Step 2**, add the following loader snippet right before the closing body tag:
+**Step 2**, add the following loader snippet right before the `</body>` tag:
 
 ```html
 <script>
@@ -30,6 +30,8 @@ Async, embeddable submit + vote counter button for Hacker News. If the story has
 
 _Note: you can safely embed multiple buttons on the same page._
 
-### License
 
-(MIT License) - Copyright (c) 2012 Ilya Grigorik
+### Misc
+
+* Kudos to @sbashyal and @stbullard for the button styling (hnlike.com)
+* (MIT License) - Copyright (c) 2012 Ilya Grigorik
