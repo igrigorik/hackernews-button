@@ -4,6 +4,7 @@
 
 <head>
 <style type="text/css">
+body {background:transparent;padding:0;margin:0;}
 .hn_bt {font-family:'lucida grande',verdana,sans-serif;font-size:11px;text-decoration:none;cursor:pointer;line-height:14px;display:block;padding:0;margin:0;}.hn_cn{float:left;position:relative;z-index:2;height:0;width:5px;top:-5px;left:2px;}
 .hn_cn s,.hn_cn i {border:solid transparent;border-right-color:#d7d7d7;border-width:4px 5px 4px 0;top:1px;display:block;position:relative;}
 .hn_cn i {left:2px;top:-7px;border-right-color:#fff;}
@@ -50,12 +51,12 @@
 </style>
 </head>
 
-<body style="background:transparent;">
+<body>
   <div>
   {{if .Id}}
     <a href="http://news.ycombinator.com/item?id={{.Id}}" target="_blank">
   {{else}}
-    <a href="http://news.ycombinator.com/submitlink?u={{.Url}}&t={{.Title}}">
+    <a href="http://news.ycombinator.com/submitlink?u={{.Url}}&amp;t={{.Title}}" target="_blank">
   {{end}}
     <span class="hn_bt">
     <table cellspacing="0" cellpadding="0">

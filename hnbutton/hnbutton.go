@@ -4,11 +4,11 @@ import (
     "appengine"
     "appengine/urlfetch"
     "encoding/json"
-    "fmt"
     "html/template"
     "io/ioutil"
     "net/http"
     "net/url"
+    "fmt"
 )
 
 var buttonTemplate, _ = template.New("page").ParseFiles("hnbutton/button.html")
