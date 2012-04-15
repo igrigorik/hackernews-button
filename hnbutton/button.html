@@ -18,9 +18,9 @@ body {background:transparent;padding:0;margin:0;}
 <body>
   <div>
   {{if .Id}}
-    <a href="http://news.ycombinator.com/item?id={{.Id}}" target="_blank">
+    <a onclick="parent.postMessage('vote','*')" href="http://news.ycombinator.com/item?id={{.Id}}" target="_blank">
   {{else}}
-    <a href="http://news.ycombinator.com/submitlink?u={{.Url}}&amp;t={{.Title}}" target="_blank">
+    <a onclick="parent.postMessage('submit','*')" href="http://news.ycombinator.com/submitlink?u={{.Url}}&amp;t={{.Title}}" target="_blank">
   {{end}}
     <span class="hn_bt">
     <table cellspacing="0" cellpadding="0">
