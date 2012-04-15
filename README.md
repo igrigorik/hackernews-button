@@ -2,7 +2,7 @@
 
 ![HN Button](http://img.skitch.com/20120415-bp8igiq74w53f91swt6tcy9cx8.jpg)
 
-Async, embeddable submit + vote counter button for Hacker News. If the story has not be posted to HN, it will automatically show the "Submit" button, otherwise it will report the latest point count for the story.
+Async, embeddable submit + vote counter button for Hacker News. If the story has not been posted to HN, it will automatically show the "Submit" button, otherwise it will report the latest point count for the story.
 
 ### Embedding the button
 
