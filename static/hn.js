@@ -4,6 +4,7 @@
   var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
   eventer(messageEvent,function(e) {
+    if (e.origin !== 'http://hnbutton.appspot.com/') { return; }
     if (typeof(_gaq) != "undefined") {
       if (e.data == 'vote' || e.data == 'submit') {
         _gaq.push(['_trackSocial', 'Hacker News', e.data]);
