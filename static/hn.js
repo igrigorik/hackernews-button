@@ -1,24 +1,29 @@
-(function(d){
-	var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-	var eventer = window[eventMethod];
-	var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+(function(w){
+  var eventMethod = w.addEventListener ? "addEventListener" : "attachEvent";
+  var eventer = w[eventMethod];
+  var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
-	eventer(messageEvent,function(e) {
-		if (typeof(_gaq) != "undefined") {
-			_gaq.push(['_trackSocial', 'hacker news', e.data])
-		}
-	},false);
+  eventer(messageEvent,function(e) {
+    if (typeof(_gaq) != "undefined") {
+      if (e.data == 'vote' || e.data == 'submit') {
+        _gaq.push(['_trackSocial', 'Hacker News', e.data]);
+      }
+    }
+  }, false);
 
-	var hnAnchorElements = document.getElementsByClassName("hn-share-button");
-	for(var e = hnAnchorElements.length - 1; e >= 0; e--) {
-		title = hnAnchorElements[e].getAttribute("data-title") || window.document.title;
-		url   = hnAnchorElements[e].getAttribute("data-url")   || window.location.href;
+  var d = window.document, e,
+      hnAnchorElements = d.getElementsByClassName("hn-share-button");
 
-		var i = document.createElement("iframe");
-		i.src = "http://hnbutton.appspot.com/button?title="+encodeURIComponent(title)+"&url="+encodeURIComponent(url);
-		i.scrolling = "auto"; i.frameBorder = "0"; i.width = "75px"; i.height = "20px";
+  for(e = hnAnchorElements.length - 1; e >= 0; e--) {
+    var anchor = hnAnchorElements[e],
+        title = anchor.getAttribute("data-title") || d.title,
+        url = anchor.getAttribute("data-url") || w.location.href,
+        i = d.createElement("iframe");
 
-		hnAnchorElements[e].parentNode.insertBefore(i, hnAnchorElements[e]);
-		hnAnchorElements[e].parentNode.removeChild(hnAnchorElements[e]);
-	}
-})(document);
+    i.src = "http://hnbutton.appspot.com/button?title="+encodeURIComponent(title)+"&url="+encodeURIComponent(url);
+    i.scrolling = "auto"; i.frameBorder = "0"; i.width = "75px"; i.height = "20px";
+
+    anchor.parentNode.insertBefore(i, anchor);
+    anchor.parentNode.removeChild(anchor);
+  }
+})(window);
