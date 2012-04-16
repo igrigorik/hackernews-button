@@ -23,11 +23,12 @@ Async, embeddable submit + vote counter button for Hacker News.
 
 ```html
 <script>
-	(function() {
-	   var hn = document.createElement('script'); hn.type = 'text/javascript';
-	   hn.async = true; hn.src = 'http://hnbutton.appspot.com/static/hn.js';
-	   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(hn, s);
-	})();
+	(function(d, t) {
+		var g = d.createElement(t),
+		    s = d.getElementsByTagName(t)[0];
+		g.src = '//hnbutton.appspot.com/static/hn.js';
+		s.parentNode.insertBefore(g, s);
+	}(document, 'script'));
 </script>
 ```
 
