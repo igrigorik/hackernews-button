@@ -3,7 +3,23 @@
   "use strict";
   var j,
     d = w.document,
-    hnAnchorElements = d.getElementsByClassName("hn-share-button"),
+    getElementsByClassName = function(match, tag) {
+      if (d.getElementsByClassName) {
+        return d.getElementsByClassName(match);
+      }
+      var result = [],
+        elements = d.getElementsByTagName(tag || '*'),
+        i, elem; 
+      match = " " + match + " ";
+      for (i = 0; i < elements.length; i++) { 
+        elem = elements[i];
+        if ((" " + (elem.className || elem.getAttribute("class")) + " ").indexOf(match) > -1) {
+          result.push(elem);
+        }
+      }
+      return result; 
+    },
+    hnAnchorElements = getElementsByClassName("hn-share-button", "a"),
     eventMethod = w.addEventListener ? "addEventListener" : "attachEvent",
     eventer = w[eventMethod],
     messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message",
