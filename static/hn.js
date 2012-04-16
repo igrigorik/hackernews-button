@@ -27,6 +27,7 @@
     i.frameBorder = "0"; 
     i.width = "75px"; 
     i.height = "20px";
+    i.className = "hn-share-iframe";
 
     anchor.parentNode.insertBefore(i, anchor);
     anchor.parentNode.removeChild(anchor);
