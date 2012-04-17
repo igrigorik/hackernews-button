@@ -9,15 +9,15 @@
       }
       var result = [],
         elements = d.getElementsByTagName(tag || '*'),
-        i, elem; 
+        i, elem;
       match = " " + match + " ";
-      for (i = 0; i < elements.length; i++) { 
+      for (i = 0; i < elements.length; i++) {
         elem = elements[i];
         if ((" " + (elem.className || elem.getAttribute("class")) + " ").indexOf(match) > -1) {
           result.push(elem);
         }
       }
-      return result; 
+      return result;
     },
     hnAnchorElements = getElementsByClassName("hn-share-button", "a"),
     eventMethod = w.addEventListener ? "addEventListener" : "attachEvent",
@@ -39,9 +39,9 @@
       i = d.createElement("iframe");
 
     i.src = base + "button?title=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url);
-    i.scrolling = "auto"; 
-    i.frameBorder = "0"; 
-    i.width = "75px"; 
+    i.scrolling = "auto";
+    i.frameBorder = "0";
+    i.width = "75px";
     i.height = "20px";
     i.className = "hn-share-iframe";
 
