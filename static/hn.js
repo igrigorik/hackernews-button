@@ -23,7 +23,7 @@
     eventMethod = w.addEventListener ? "addEventListener" : "attachEvent",
     eventer = w[eventMethod],
     messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message",
-    base = "http://hnbutton.appspot.com/";
+    base = "http://hnbutton.appspot.com";
 
   w._gaq || (w._gaq = []);
   eventer(messageEvent, function (e) {
@@ -38,7 +38,7 @@
       url = anchor.getAttribute("data-url") || w.location.href,
       i = d.createElement("iframe");
 
-    i.src = base + "button?title=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url);
+    i.src = base + "/button?title=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url);
     i.scrolling = "auto";
     i.frameBorder = "0";
     i.width = "75px";
