@@ -3,11 +3,15 @@ package button
 import (
     "appengine"
     "appengine/urlfetch"
+    "appengine/memcache"
     "encoding/json"
     "html/template"
+    "crypto/md5"
     "io/ioutil"
     "net/http"
     "net/url"
+    "time"
+    "hash"
     "fmt"
 )
 
@@ -25,6 +29,7 @@ type Result struct {
 type Hit struct {
     Id           int
     Points       int
+    Hits         int
     Num_comments int
     Username     string
 }
@@ -56,27 +61,76 @@ func Button(w http.ResponseWriter, r *http.Request) {
         panic("required parameters: url, title")
     }
 
-    c.Infof("Fetching HN data for: %s, %s\n", req_title, req_url)
-
     _, err := url.Parse(req_url[0])
     if err != nil {
         panic("Invalid URL: " + err.Error())
     }
 
-    pageData := "http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][url][]=" + req_url[0]
+    var h hash.Hash = md5.New()
+    h.Write([]byte(req_url[0]))
+    var hkey string = fmt.Sprintf("%x", h.Sum(nil))
 
-    client := urlfetch.Client(c)
-    resp, err := client.Get(pageData)
-    if err != nil {
-        panic("Cannot fetch HN data: " + err.Error())
-    }
+    c.Infof("Fetching HN data for: %s, %s\n", req_title, req_url)
 
-    defer resp.Body.Close()
-    body, _ := ioutil.ReadAll(resp.Body)
+    var item Hit
+    if cachedItem, err := memcache.Get(c, hkey); err == memcache.ErrCacheMiss {
+        pageData := "http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][url][]=" + req_url[0]
 
-    var hnreply hnapireply
-    if err := json.Unmarshal(body, &hnreply); err != nil {
-        panic("Cannot unmarshall JSON data")
+        client := &http.Client{
+            Transport: &urlfetch.Transport{
+            Context: c,
+            Deadline: time.Duration(15)*time.Second,
+          },
+        }
+
+        resp, err := client.Get(pageData)
+        if err != nil {
+            panic("Cannot fetch HN data: " + err.Error())
+        }
+
+        defer resp.Body.Close()
+        body, _ := ioutil.ReadAll(resp.Body)
+
+        var hnreply hnapireply
+        if err := json.Unmarshal(body, &hnreply); err != nil {
+            panic("Cannot unmarshall JSON data")
+        }
+
+        if hnreply.Hits == 0 {
+            item.Hits = 0
+        } else {
+            item.Hits = hnreply.Hits;
+            item.Id = hnreply.Results[0].Item.Id;
+            item.Points = hnreply.Results[0].Item.Points;
+            item.Num_comments = hnreply.Results[0].Item.Num_comments;
+            item.Username = hnreply.Results[0].Item.Username;
+        }
+
+        var sdata []byte
+        if sdata, err = json.Marshal(item); err != nil {
+            panic("Cannot serialize hit to JSON")
+        }
+
+        c.Debugf("Saving to memcache: %s", sdata)
+
+        data := &memcache.Item{
+            Key: hkey,
+            Value: sdata,
+            Expiration: time.Duration(60)*time.Second,
+        }
+
+        if err := memcache.Set(c, data); err != nil {
+            c.Errorf("Cannot store hit to memcache: %s", err.Error())
+        }
+
+    } else if err != nil {
+        panic("Error getting item from cache: %v")
+
+    } else {
+        if err := json.Unmarshal(cachedItem.Value, &item); err != nil {
+            panic("Cannot unmarshall hit from cache")
+        }
+        c.Infof("Fetched from memcache: %i", item.Id)
     }
 
     // Cache the response in the HTTP edge cache, if possible
@@ -84,7 +138,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Cache-Control", "public, max-age=61")
     w.Header().Set("Pragma", "Public")
 
-    if hnreply.Hits == 0 {
+    if item.Hits == 0 {
         c.Infof("No hits, rendering submit template")
         params := map[string]interface{}{"Url": req_url[0], "Title": req_title[0]}
         if err := buttonTemplate.ExecuteTemplate(w, "button", params); err != nil {
@@ -92,12 +146,9 @@ func Button(w http.ResponseWriter, r *http.Request) {
         }
 
     } else {
-        c.Infof("Hits: %f, Points: %f, ID: %i \n",
-            hnreply.Hits,
-            hnreply.Results[0].Item.Points,
-            hnreply.Results[0].Item.Id)
+        c.Infof("Points: %f, ID: %i \n", item.Points, item.Id)
 
-        if err := buttonTemplate.ExecuteTemplate(w, "button", hnreply.Results[0].Item); err != nil {
+        if err := buttonTemplate.ExecuteTemplate(w, "button", item); err != nil {
             panic("Cannot execute template")
         }
     }
