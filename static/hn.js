@@ -32,20 +32,25 @@
     }
   }, false);
 
-  for (j = hnAnchorElements.length - 1; j >= 0; j--) {
-    var anchor = hnAnchorElements[j],
-      title = anchor.getAttribute("data-title") || d.title,
-      url = anchor.getAttribute("data-url") || w.location.href,
-      i = d.createElement("iframe");
+  w.HN = {
+    render: function(anchor) {
+      var title = anchor.getAttribute("data-title") || d.title,
+        url = anchor.getAttribute("data-url") || w.location.href,
+        i = d.createElement("iframe");
 
-    i.src = base + "/button?title=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url);
-    i.scrolling = "auto";
-    i.frameBorder = "0";
-    i.width = "75px";
-    i.height = "20px";
-    i.className = "hn-share-iframe";
+      i.src = base + "/button?title=" + encodeURIComponent(title) + "&url=" + encodeURIComponent(url);
+      i.scrolling = "auto";
+      i.frameBorder = "0";
+      i.width = "75px";
+      i.height = "20px";
+      i.className = "hn-share-iframe";
 
-    anchor.parentNode.insertBefore(i, anchor);
-    anchor.parentNode.removeChild(anchor);
-  }
+      anchor.parentNode.insertBefore(i, anchor);
+      anchor.parentNode.removeChild(anchor);
+    }
+  };
+
+  for (j = hnAnchorElements.length - 1; j >= 0; j--)
+    w.HN.render(hnAnchorElements[j]);
+
 })(window);
