@@ -135,7 +135,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
 
     // Cache the response in the HTTP edge cache, if possible
     // http://code.google.com/p/googleappengine/issues/detail?id=2258
-    w.Header().Set("Cache-Control", "public, max-age=61")
+    w.Header().Set("Cache-Control", "public, max-age=300")
     w.Header().Set("Pragma", "Public")
 
     if item.Hits == 0 {

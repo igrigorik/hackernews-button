@@ -1,7 +1,9 @@
 application: hnbutton
-version: 13
+version: 15
 runtime: go
 api_version: go1
+
+default_expiration: "1d"
 
 handlers:
 - url: /static
