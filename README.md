@@ -4,7 +4,7 @@
 
 Async, embeddable submit + vote counter button for Hacker News.
 
-- If the story has not been posted to HN, "Submit" button is shown, otherwise latest point count is displayed. 
+- If the story has not been posted to HN, "Submit" button is shown, otherwise latest point count is displayed.
 - Auto-detects Google Analytics and registers clicks events (see reports under `Traffic Sources > Social > Social Plugins`).
 
 ### Embedding the button
@@ -26,7 +26,7 @@ Async, embeddable submit + vote counter button for Hacker News.
 	(function(d, t) {
 		var g = d.createElement(t),
 		    s = d.getElementsByTagName(t)[0];
-		g.src = '//hnbutton.appspot.com/static/hn.js';
+		g.src = '//hnbutton.appspot.com/static/hn.min.js';
 		s.parentNode.insertBefore(g, s);
 	}(document, 'script'));
 </script>
