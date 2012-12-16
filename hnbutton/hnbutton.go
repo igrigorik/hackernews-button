@@ -74,7 +74,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
 
     var item Hit
     if cachedItem, err := memcache.Get(c, hkey); err == memcache.ErrCacheMiss {
-        pageData := "http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][url][]=" + req_url[0]
+        pageData := "http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][url][]=" + url.QueryEscape(req_url[0])
 
         client := &http.Client{
             Transport: &urlfetch.Transport{
