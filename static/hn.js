@@ -23,7 +23,7 @@
     eventMethod = w.addEventListener ? "addEventListener" : "attachEvent",
     eventer = w[eventMethod],
     messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message",
-    base = "http://hnbutton.appspot.com";
+    base = "//hnbutton.appspot.com";
 
   w._gaq || (w._gaq = []);
   eventer(messageEvent, function (e) {
