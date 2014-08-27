@@ -18,20 +18,16 @@ import (
 var buttonTemplate, _ = template.New("page").ParseFiles("hnbutton/button.html")
 
 type hnapireply struct {
-    Hits    int
-    Results []Result
-}
-
-type Result struct {
-    Item Hit
+    NbHits int
+    Hits []Hit
 }
 
 type Hit struct {
-    Id           int
+    Story_id     int
     Points       int
     Hits         int
     Num_comments int
-    Username     string
+    Author     string
 }
 
 func Button(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +70,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
 
     var item Hit
     if cachedItem, err := memcache.Get(c, hkey); err == memcache.ErrCacheMiss {
-        pageData := "http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][url][]=" + url.QueryEscape(req_url[0])
+        pageData := "http://hn.algolia.com/api/v1/search_by_date?query=" + url.QueryEscape(req_url[0])
 
         client := &http.Client{
             Transport: &urlfetch.Transport{
@@ -90,21 +86,21 @@ func Button(w http.ResponseWriter, r *http.Request) {
 
         defer resp.Body.Close()
         body, _ := ioutil.ReadAll(resp.Body)
-
         var hnreply hnapireply
         if err := json.Unmarshal(body, &hnreply); err != nil {
             panic("Cannot unmarshall JSON data")
         }
 
-        if hnreply.Hits == 0 {
+        if hnreply.NbHits == 0 {
             item.Hits = 0
         } else {
-            item.Hits = hnreply.Hits;
-            item.Id = hnreply.Results[0].Item.Id;
-            item.Points = hnreply.Results[0].Item.Points;
-            item.Num_comments = hnreply.Results[0].Item.Num_comments;
-            item.Username = hnreply.Results[0].Item.Username;
+            item.Hits = hnreply.NbHits;
+            item.Story_id = hnreply.Hits[0].Story_id;
+            item.Points = hnreply.Hits[0].Points;
+            item.Num_comments = hnreply.Hits[0].Num_comments;
+            item.Author = hnreply.Hits[0].Author;
         }
+
 
         var sdata []byte
         if sdata, err = json.Marshal(item); err != nil {
@@ -130,7 +126,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
         if err := json.Unmarshal(cachedItem.Value, &item); err != nil {
             panic("Cannot unmarshall hit from cache")
         }
-        c.Infof("Fetched from memcache: %i", item.Id)
+        c.Infof("Fetched from memcache: %i", item.Story_id)
     }
 
     // Cache the response in the HTTP edge cache, if possible
@@ -146,7 +142,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
         }
 
     } else {
-        c.Infof("Points: %f, ID: %i \n", item.Points, item.Id)
+        c.Infof("Points: %f, ID: %i \n", item.Points, item.Story_id)
 
         if err := buttonTemplate.ExecuteTemplate(w, "button", item); err != nil {
             panic("Cannot execute template")
