@@ -101,7 +101,6 @@ func Button(w http.ResponseWriter, r *http.Request) {
             item.Author = hnreply.Hits[0].Author;
         }
 
-
         var sdata []byte
         if sdata, err = json.Marshal(item); err != nil {
             panic("Cannot serialize hit to JSON")
