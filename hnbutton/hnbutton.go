@@ -23,11 +23,11 @@ type hnapireply struct {
 }
 
 type Hit struct {
-    Story_id     int
+    ObjectID     string
     Points       int
     Hits         int
     Num_comments int
-    Author     string
+    Author       string
 }
 
 func Button(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +70,8 @@ func Button(w http.ResponseWriter, r *http.Request) {
 
     var item Hit
     if cachedItem, err := memcache.Get(c, hkey); err == memcache.ErrCacheMiss {
-        pageData := "http://hn.algolia.com/api/v1/search_by_date?query=" + url.QueryEscape(req_url[0])
+        pageData := "http://hn.algolia.com/api/v1/search?tags=story&restrictSearchableAttributes=url&query=" +
+                    url.QueryEscape(req_url[0])
 
         client := &http.Client{
             Transport: &urlfetch.Transport{
@@ -94,11 +95,11 @@ func Button(w http.ResponseWriter, r *http.Request) {
         if hnreply.NbHits == 0 {
             item.Hits = 0
         } else {
-            item.Hits = hnreply.NbHits;
-            item.Story_id = hnreply.Hits[0].Story_id;
-            item.Points = hnreply.Hits[0].Points;
-            item.Num_comments = hnreply.Hits[0].Num_comments;
-            item.Author = hnreply.Hits[0].Author;
+            item.Hits = hnreply.NbHits
+            item.ObjectID = hnreply.Hits[0].ObjectID
+            item.Points = hnreply.Hits[0].Points
+            item.Num_comments = hnreply.Hits[0].Num_comments
+            item.Author = hnreply.Hits[0].Author
         }
 
         var sdata []byte
@@ -125,7 +126,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
         if err := json.Unmarshal(cachedItem.Value, &item); err != nil {
             panic("Cannot unmarshall hit from cache")
         }
-        c.Infof("Fetched from memcache: %i", item.Story_id)
+        c.Infof("Fetched from memcache: %i", item.ObjectID)
     }
 
     // Cache the response in the HTTP edge cache, if possible
@@ -141,7 +142,7 @@ func Button(w http.ResponseWriter, r *http.Request) {
         }
 
     } else {
-        c.Infof("Points: %f, ID: %i \n", item.Points, item.Story_id)
+        c.Infof("Points: %f, ID: %i \n", item.Points, item.ObjectID)
 
         if err := buttonTemplate.ExecuteTemplate(w, "button", item); err != nil {
             panic("Cannot execute template")

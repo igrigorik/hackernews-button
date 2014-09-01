@@ -16,8 +16,8 @@ body {background:transparent;padding:0;margin:0;}
 
 <body>
   <div>
-  {{if .Story_id}}
-    <a onclick="parent.postMessage('vote','*')" href="http://news.ycombinator.com/item?id={{.Story_id}}" target="_blank">
+  {{if .ObjectID}}
+    <a onclick="parent.postMessage('vote','*')" href="http://news.ycombinator.com/item?id={{.ObjectID}}" target="_blank">
   {{else}}
     <a onclick="parent.postMessage('submit','*')" href="http://news.ycombinator.com/submitlink?u={{.Url}}&amp;t={{.Title}}" target="_blank">
   {{end}}
@@ -32,7 +32,7 @@ body {background:transparent;padding:0;margin:0;}
                 <tr>
                   <td><div class="hn_cn"><s></s><i></i></div></td>
                   <td><div class="hn_cc"><span style="color:#333;">
-                  {{if .Story_id}}
+                  {{if .ObjectID}}
                     {{.Points}}
                   {{else}}
                     submit
