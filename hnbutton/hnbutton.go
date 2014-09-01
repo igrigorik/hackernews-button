@@ -2,24 +2,24 @@ package button
 
 import (
     "appengine"
-    "appengine/urlfetch"
     "appengine/memcache"
-    "encoding/json"
-    "html/template"
+    "appengine/urlfetch"
     "crypto/md5"
+    "encoding/json"
+    "fmt"
+    "hash"
+    "html/template"
     "io/ioutil"
     "net/http"
     "net/url"
     "time"
-    "hash"
-    "fmt"
 )
 
 var buttonTemplate, _ = template.New("page").ParseFiles("hnbutton/button.html")
 
 type hnapireply struct {
     NbHits int
-    Hits []Hit
+    Hits   []Hit
 }
 
 type Hit struct {
@@ -71,13 +71,13 @@ func Button(w http.ResponseWriter, r *http.Request) {
     var item Hit
     if cachedItem, err := memcache.Get(c, hkey); err == memcache.ErrCacheMiss {
         pageData := "http://hn.algolia.com/api/v1/search?tags=story&restrictSearchableAttributes=url&query=" +
-                    url.QueryEscape(req_url[0])
+            url.QueryEscape(req_url[0])
 
         client := &http.Client{
             Transport: &urlfetch.Transport{
-            Context: c,
-            Deadline: time.Duration(15)*time.Second,
-          },
+                Context:  c,
+                Deadline: time.Duration(15) * time.Second,
+            },
         }
 
         resp, err := client.Get(pageData)
@@ -110,9 +110,9 @@ func Button(w http.ResponseWriter, r *http.Request) {
         c.Debugf("Saving to memcache: %s", sdata)
 
         data := &memcache.Item{
-            Key: hkey,
-            Value: sdata,
-            Expiration: time.Duration(60)*time.Second,
+            Key:        hkey,
+            Value:      sdata,
+            Expiration: time.Duration(60) * time.Second,
         }
 
         if err := memcache.Set(c, data); err != nil {
