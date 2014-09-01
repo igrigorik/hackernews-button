@@ -19,17 +19,10 @@ Async, embeddable submit + vote counter button for Hacker News.
 <a href="http://news.ycombinator.com/submit" class="hn-share-button" data-title="Some Title" data-url="http://www.igvita.com/">Vote on HN</a>
 ```
 
-**Step 2**, add the following loader snippet right before the `</body>` tag:
+**Step 2**, include the (async) javascript file:
 
 ```html
-<script>
-	(function(d, t) {
-		var g = d.createElement(t),
-		    s = d.getElementsByTagName(t)[0];
-		g.src = '//hnbutton.appspot.com/static/hn.min.js';
-		s.parentNode.insertBefore(g, s);
-	}(document, 'script'));
-</script>
+<script src="//hnbutton.appspot.com/static/hn.min.js" async defer></script>
 ```
 
 _Note: you can safely embed multiple buttons on the same page._
@@ -37,4 +30,5 @@ _Note: you can safely embed multiple buttons on the same page._
 ### Misc
 
 * Kudos to @sbashyal and @stbullard for the button styling (hnlike.com)
+* Kudos to Algolia for an [awesome HN API](http://hn.algolia.com/)
 * (MIT License) - Copyright (c) 2012 Ilya Grigorik
